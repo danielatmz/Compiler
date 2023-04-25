@@ -1,15 +1,22 @@
 from rply import ParserGenerator
-from ast_1 import Number, Statements, Sum, Sub, Mult, Div, LessEqual, GreaterEqual, LessThan, GreaterThan, NotEqualTo, IsEqual, Print, Program
+from ast_1 import *
 
 
 class Parser():
     def __init__(self):
         self.pg = ParserGenerator(
             # A list of all token names accepted by the parser.
-            ['NUMBER', 'PRINT', 'LPAREN', 'RPAREN',
-             'SEMI_COLON', 'SUM', 'SUB', 'MULT', 'DIV',
+            ['REAL', 'INT', 'STRING', 'BOOL',
+             
+             'LPAREN', 'RPAREN', 'LBRACES', 'RBRACES', 
+             'DEC_OP', 'COMA',
+             
+             'SUM', 'SUB', 'MULT', 'DIV',
              'LESS_EQUAL', 'GREATER_EQUAL', 'LESS_THAN', 'GREATER_THAN',
-             'NOT_EQUAL_TO', 'IS_EQUAL',
+             'NOT_EQUAL_TO', 'IS_EQUAL', 'EQUAL',
+
+             'PRINT', 'AND', 'OR',
+
              'PROGRAM', 'MAIN', 'END'],
             # A list of precedence rules with ascending precedence, to
             # disambiguate ambiguous production rules.
@@ -30,15 +37,15 @@ class Parser():
 
         @self.pg.production("statements : statements statements")
         @self.pg.production("statements : proc")
+        @self.pg.production("statements : expression")
         def statements_all(p):
             return Statements(p)
         
         # print
-        @self.pg.production('proc : PRINT LPAREN expression RPAREN')
-        @self.pg.production('proc : expression')
+        @self.pg.production('proc : PRINT expression')
         def proc(p):
             if len(p) > 1:
-                return Print(p[2])
+                return Print(p[1])
             else:
                 return p[0]
         
@@ -90,10 +97,18 @@ class Parser():
                 return IsEqual(left, right)
 
 
-        @self.pg.production('expression : NUMBER')
-        def number(p):
-            return Number(p[0].value)
+        # @self.pg.production('expression : NUMBER')
+        # def number(p):
+        #     return Number(p[0].value)
         
+        # number expressions
+        @self.pg.production('expression : REAL')
+        @self.pg.production('expression : INT')
+        def number(p):
+            if (p[0].gettokentype() == 'REAL'):
+                return Real(p[0].value)
+            return Number(p[0].value)
+
         @self.pg.error
         def error_handler(token):
             raise ValueError(token)

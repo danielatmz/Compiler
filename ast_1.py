@@ -12,6 +12,13 @@ class Number():
 
     def eval(self):
         return int(self.value)
+    
+class Real():
+    def __init__(self, value):
+        self.value = value
+
+    def eval(self):
+        return int(self.value)
 
 class BinaryOp():
     def __init__(self, left, right):

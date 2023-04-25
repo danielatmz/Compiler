@@ -22,14 +22,14 @@ class Lexer():
         self.lexer.add('LBRACES', r'\{')
         self.lexer.add('RBRACES', r'\}')
 
+        # Declare Operator
+        self.lexer.add('DEC_OP', r'::')
+
         # Semi Colon
         self.lexer.add('SEMI_COLON', r'\;')
 
         # Coma
         self.lexer.add('COMA', r'\,')
-
-        # dot
-        self.lexer.add('DOT', r'\.')
 
         # Arithmetic Operators
         self.lexer.add('SUM', r'\+')
@@ -45,18 +45,30 @@ class Lexer():
         self.lexer.add('NOT_EQUAL_TO', r'!=')
         self.lexer.add('IS_EQUAL', r'==')
 
-        # Number
-        self.lexer.add('NUMBER', r'\d+')
+        # =
+        self.lexer.add('EQUAL', r'\=')
+
+        # and / or
+        self.lexer.add('AND', r'and')
+        self.lexer.add('OR', r'or')
+
+        # Data Types - declaration
+        self.lexer.add('INT_TYPE', r'int')
+        self.lexer.add('STRING_TYPE', r'string')
+        self.lexer.add('REAL_TYPE', r'real')
+        self.lexer.add('BOOL_TYPE', r'bool')
+
+        # Data Types - values
+        self.lexer.add('REAL',  r"\d+(\.\d+)")
+        self.lexer.add('INT', r'\d+')
+        self.lexer.add('STRING', r'".*"')
+        self.lexer.add('BOOL', r"(true|false)")
+
+        # IDs - Vars
+        self.lexer.add('IDENTIFIER', r'[_\w]*[_\w0-9]+')
         
         # Ignore spaces
         self.lexer.ignore('\s+')
-        # # Ignore Tab 
-        # self.lexer.ignore('\t')
-        # # Ignore Linejump 
-        # self.lexer.ignore(r'\n')
-        
-
-
 
     def get_lexer(self):
         self._add_tokens()
