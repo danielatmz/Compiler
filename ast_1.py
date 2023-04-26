@@ -1,3 +1,5 @@
+variables = {}
+
 class Statements:
     def __init__(self, nodes):
         self.nodes = nodes
@@ -18,7 +20,15 @@ class Real():
         self.value = value
 
     def eval(self):
-        return int(self.value)
+        return float(self.value)
+    
+class String():
+    def __init__(self, value):
+        self.value = value
+
+    def eval(self):
+        return str(self.value)
+
 
 class BinaryOp():
     def __init__(self, left, right):
@@ -71,6 +81,41 @@ class Print():
 
     def eval(self):
         print(self.value.eval())
+
+class Assign():
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def eval(self):
+        variables[self.name] = self.value.eval()
+
+class Declare:
+    def __init__(self, name):
+        self.name = name
+
+    def eval(self):
+        variables[self.name] = None
+        
+class DeclareAux():
+    def __init__(self, name):
+        self.name = name
+    
+    def eval(self):
+        if self.name in variables.keys():
+            return variables[self.name]
+        else: 
+            raise RuntimeError("Variable not declared:", self.name)
+
+class Variable():
+    def __init__(self, name):
+        self.name = name
+    
+    def eval(self):
+        if self.name in variables.keys():
+            return variables[self.name]
+        else: 
+            raise RuntimeError("Variable not declared:", self.name)
 
 class Program():
     def __init__(self, value):

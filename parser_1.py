@@ -6,7 +6,9 @@ class Parser():
     def __init__(self):
         self.pg = ParserGenerator(
             # A list of all token names accepted by the parser.
-            ['REAL', 'INT', 'STRING', 'BOOL',
+            ['REAL', 'INT', 'STRING', 'BOOLEAN',
+             
+             'DT_REAL', 'DT_INT', 'DT_STRING', 'DT_BOOLEAN',
              
              'LPAREN', 'RPAREN', 'LBRACES', 'RBRACES', 
              'DEC_OP', 'COMA',
@@ -15,7 +17,7 @@ class Parser():
              'LESS_EQUAL', 'GREATER_EQUAL', 'LESS_THAN', 'GREATER_THAN',
              'NOT_EQUAL_TO', 'IS_EQUAL', 'EQUAL',
 
-             'PRINT', 'AND', 'OR',
+             'PRINT', 'AND', 'OR', 'VAR_NAME',
 
              'PROGRAM', 'MAIN', 'END'],
             # A list of precedence rules with ascending precedence, to
@@ -41,6 +43,31 @@ class Parser():
         def statements_all(p):
             return Statements(p)
         
+        # Declaration - int :: x
+        @self.pg.production('VAR_LIST : VAR_NAME')
+        def varDeclaration(p):
+            return [p[0].getstr()]
+        
+        @self.pg.production('VAR_LIST : VAR_NAME COMA VAR_LIST')
+        def varDeclarationList(p):
+            return [p[0].getstr()] + p[2]
+
+        @self.pg.production('proc : dataType DEC_OP VAR_LIST')
+        def varDec(p):
+            VAR_LIST = p[2]
+            print(p[2])
+            for n in VAR_LIST:
+                return Declare(n)
+        
+        #assignation - x = 2
+        @self.pg.production('proc : VAR_NAME EQUAL expression')
+        def varAssign(p):
+            return Assign(p[0].getstr(), p[2])
+        
+        @self.pg.production('expression : VAR_NAME')
+        def id(p):
+            return Variable(p[0].getstr())
+        
         # print
         @self.pg.production('proc : PRINT expression')
         def proc(p):
@@ -49,7 +76,7 @@ class Parser():
             else:
                 return p[0]
         
-        # parenthesis PEMDAS
+        # paren
         @self.pg.production('expression : LPAREN expression RPAREN')
         def expression_parenths(p):
             return p[1]
@@ -95,19 +122,28 @@ class Parser():
                 return NotEqualTo(left, right)
             elif relOperator.gettokentype() == 'IS_EQUAL':
                 return IsEqual(left, right)
-
-
-        # @self.pg.production('expression : NUMBER')
-        # def number(p):
-        #     return Number(p[0].value)
         
-        # number expressions
+        #Datatypes: 
+        @self.pg.production('dataType : DT_INT')
+        @self.pg.production('dataType : DT_STRING')
+        @self.pg.production('dataType : DT_REAL')
+        @self.pg.production('dataType : DT_BOOLEAN')
+        def dataTypes(p):
+            return p[0]
+        
+        
+        # NUMBER/INT expressions
         @self.pg.production('expression : REAL')
         @self.pg.production('expression : INT')
         def number(p):
             if (p[0].gettokentype() == 'REAL'):
                 return Real(p[0].value)
             return Number(p[0].value)
+        
+        # STRING expressions
+        @self.pg.production('expression : STRING')
+        def string(p):
+            return String(p[0].value[1:-1])
 
         @self.pg.error
         def error_handler(token):
