@@ -1,6 +1,5 @@
 from rply import LexerGenerator
 
-
 class Lexer():
     def __init__(self):
         self.lexer = LexerGenerator()
@@ -48,9 +47,21 @@ class Lexer():
         # =
         self.lexer.add('EQUAL', r'\=')
 
-        # and / or
+        # and - or
         self.lexer.add('AND', r'and')
         self.lexer.add('OR', r'or')
+
+        # if - esle - then 
+        self.lexer.add('IF', r'if')
+        self.lexer.add('ELSE', r'else')
+        self.lexer.add('THEN', r'then')
+
+        # Do - while 
+        self.lexer.add('WHILE', r'while')
+        self.lexer.add('DO', r'do')
+
+        # For
+        self.lexer.add('FOR', r'for')
 
         # Data Types - declaration
         self.lexer.add('DT_INT', r'int')

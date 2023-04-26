@@ -1,11 +1,11 @@
 program main
-print(4 + 4 - 2)
-print((1+4)*3)
-print(1<2)
-print(1.2*1.8)
-int :: x
-x = 2
-print (x)
-x = 23
-print (x)
+int :: i,n,f,x
+print("texto dump")
+f=1
+x=5
+while (x>f) do
+{
+	f = f + 2
+}
+print(f)
 end program main

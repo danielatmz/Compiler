@@ -28,7 +28,15 @@ class String():
 
     def eval(self):
         return str(self.value)
-
+    
+#Adding strings
+class StringConcat:
+    def __init__(self, s1, s2):
+        self.s1 = s1
+        self.s2 = s2
+    
+    def eval(self):
+        return str(self.str1.value) + str(self.str2.value)
 
 class BinaryOp():
     def __init__(self, left, right):
@@ -74,13 +82,24 @@ class NotEqualTo(BinaryOp):
 class IsEqual(BinaryOp):
     def eval(self):
         return self.left.eval() == self.right.eval()
-
+    
+class And(BinaryOp):
+    def eval(self):
+        return self.left.eval() and self.right.eval()
+    
+class Or(BinaryOp):
+    def eval(self):
+        return self.left.eval() or self.right.eval()
+    
 class Print():
     def __init__(self, value):
         self.value = value
 
     def eval(self):
-        print(self.value.eval())
+        if (isinstance(self.value, str)):
+            print(self.value.getstr()[1:-1])
+        else: 
+            print(self.value.eval())
 
 class Assign():
     def __init__(self, name, value):
@@ -96,16 +115,6 @@ class Declare:
 
     def eval(self):
         variables[self.name] = None
-        
-class DeclareAux():
-    def __init__(self, name):
-        self.name = name
-    
-    def eval(self):
-        if self.name in variables.keys():
-            return variables[self.name]
-        else: 
-            raise RuntimeError("Variable not declared:", self.name)
 
 class Variable():
     def __init__(self, name):
@@ -116,6 +125,40 @@ class Variable():
             return variables[self.name]
         else: 
             raise RuntimeError("Variable not declared:", self.name)
+        
+class If():
+    def  __init__(self, condition, body, else_block = None):
+       self.condition = condition
+       self.body = body
+       self.else_block = else_block
+    
+    def eval(self):
+       if self.condition.eval() == True:
+           return self.body.eval()
+       elif self.else_block is not None:
+           return self.else_block.eval()
+       return None
+
+class ForLoop:
+    def __init__(self, identifier, condition, increment, body):
+        self.id = identifier
+        self.condition = condition
+        self.increment = increment
+        self.body = body
+    
+    def eval(self):
+        while(self.condition.eval()):
+            self.body.eval()
+            self.increment.eval()
+
+class WhileLoop:
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def eval(self):
+        while(self.condition.eval()):
+            self.body.eval()
 
 class Program():
     def __init__(self, value):

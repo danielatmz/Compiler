@@ -6,19 +6,14 @@ class Parser():
     def __init__(self):
         self.pg = ParserGenerator(
             # A list of all token names accepted by the parser.
-            ['REAL', 'INT', 'STRING', 'BOOLEAN',
-             
+            ['REAL', 'INT', 'STRING',
              'DT_REAL', 'DT_INT', 'DT_STRING', 'DT_BOOLEAN',
-             
              'LPAREN', 'RPAREN', 'LBRACES', 'RBRACES', 
-             'DEC_OP', 'COMA',
-             
+             'DEC_OP', 'COMA', 'SEMI_COLON',
              'SUM', 'SUB', 'MULT', 'DIV',
              'LESS_EQUAL', 'GREATER_EQUAL', 'LESS_THAN', 'GREATER_THAN',
              'NOT_EQUAL_TO', 'IS_EQUAL', 'EQUAL',
-
-             'PRINT', 'AND', 'OR', 'VAR_NAME',
-
+             'PRINT', 'AND', 'OR', 'VAR_NAME', 'IF', 'ELSE', 'THEN', 'WHILE', 'DO', 'FOR',
              'PROGRAM', 'MAIN', 'END'],
             # A list of precedence rules with ascending precedence, to
             # disambiguate ambiguous production rules.
@@ -68,20 +63,12 @@ class Parser():
         def id(p):
             return Variable(p[0].getstr())
         
-        # print
-        @self.pg.production('proc : PRINT expression')
-        def proc(p):
-            if len(p) > 1:
-                return Print(p[1])
-            else:
-                return p[0]
-        
         # paren
         @self.pg.production('expression : LPAREN expression RPAREN')
         def expression_parenths(p):
             return p[1]
 
-        # arithmetic operations
+        # ArOps
         @self.pg.production('expression : expression SUM expression')
         @self.pg.production('expression : expression SUB expression')
         @self.pg.production('expression : expression MULT expression')
@@ -99,7 +86,7 @@ class Parser():
             elif operator.gettokentype() == 'DIV':
                 return Div(left, right)
             
-        # relational operations
+        # RelOps
         @self.pg.production('expression : expression LESS_EQUAL expression')
         @self.pg.production('expression : expression GREATER_EQUAL expression')
         @self.pg.production('expression : expression LESS_THAN expression')
@@ -131,7 +118,6 @@ class Parser():
         def dataTypes(p):
             return p[0]
         
-        
         # NUMBER/INT expressions
         @self.pg.production('expression : REAL')
         @self.pg.production('expression : INT')
@@ -144,6 +130,44 @@ class Parser():
         @self.pg.production('expression : STRING')
         def string(p):
             return String(p[0].value[1:-1])
+        
+        # print
+        @self.pg.production('proc : PRINT expression')
+        def proc(p):
+            if len(p) > 1:
+                return Print(p[1])
+            else:
+                return p[0]
+            
+        #if - else 
+        @self.pg.production('proc : IF expression THEN LBRACES statements RBRACES')
+        @self.pg.production('proc : IF expression THEN LBRACES statements RBRACES ELSE LBRACES statements RBRACES')
+        def ifProcs(p):
+            if len(p) > 6:
+                return If(p[1], p[4], p[8])
+            else:
+                return If(p[1], p[4])
+            
+        # and - or 
+        @self.pg.production('expression : expression AND expression')
+        @self.pg.production('expression : expression OR expression')
+        def expression_logic(p):
+            left = p[0]
+            right = p[2]
+            if (p[1].gettokentype() == 'AND'):
+                return And(left, right)
+            else:
+                return Or(left, right)
+            
+        #while
+        @self.pg.production('proc : WHILE LPAREN expression RPAREN DO LBRACES statements RBRACES')
+        def whileLoop(p):
+            return WhileLoop(p[2], p[6])
+        
+        #for
+        @self.pg.production('proc : FOR LPAREN VAR_NAME SEMI_COLON expression SEMI_COLON proc RPAREN LBRACES statements RBRACES')
+        def forLoop(p):
+            return ForLoop(p[2], p[4], p[6], p[9])
 
         @self.pg.error
         def error_handler(token):
