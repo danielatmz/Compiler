@@ -1,3 +1,4 @@
+# value, type
 variables = {}
 
 class Statements:
@@ -125,6 +126,16 @@ class Variable():
             return variables[self.name]
         else: 
             raise RuntimeError("Variable not declared:", self.name)
+        
+class Variable2():
+    def __init__(self, name):
+        self.name = name
+    
+    def eval(self):
+        if self.name in variables.keys():
+            return variables[self.name][0]
+        else: 
+            raise RuntimeError('Variable: ', self.name,' not declared.')
         
 class If():
     def  __init__(self, condition, body, else_block = None):

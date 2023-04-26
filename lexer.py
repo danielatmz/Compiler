@@ -81,6 +81,9 @@ class Lexer():
         # Ignore spaces
         self.lexer.ignore('\s+')
 
+        # Ignore comment
+        self.lexer.ignore(r'#.*')
+
     def get_lexer(self):
         self._add_tokens()
         return self.lexer.build()
