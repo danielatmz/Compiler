@@ -6,7 +6,7 @@ class Parser():
     def __init__(self):
         self.pg = ParserGenerator(
             # A list of all token names accepted by the parser.
-            ['REAL', 'INT', 'STRING',
+            ['REAL', 'INT', 'STRING', 'BOOLEAN',
              'DT_REAL', 'DT_INT', 'DT_STRING', 'DT_BOOLEAN',
              'LPAREN', 'RPAREN', 'LBRACES', 'RBRACES', 
              'DEC_OP', 'COMA', 'SEMI_COLON',
@@ -50,7 +50,6 @@ class Parser():
         @self.pg.production('proc : dataType DEC_OP VAR_LIST')
         def varDec(p):
             VAR_LIST = p[2]
-            print(p[2])
             for n in VAR_LIST:
                 return Declare(n)
         
@@ -130,6 +129,11 @@ class Parser():
         @self.pg.production('expression : STRING')
         def string(p):
             return String(p[0].value[1:-1])
+        
+        # STRING expressions
+        @self.pg.production('expression : BOOLEAN')
+        def boolean(p):
+            return Boolean(p[0].value)
         
         # print
         @self.pg.production('proc : PRINT expression')

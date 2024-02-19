@@ -11,7 +11,7 @@ https://medium.com/@marcelogdeandrade/writing-your-own-programming-language-and-
 from lexer import Lexer
 from parser_1 import Parser
 
-fname = "input.bb"
+fname = "pruebaFor.txt"
 with open(fname) as f:
     text_input = f.read()
 

@@ -4,6 +4,10 @@ int :: i,n,f,x
 print("texto dump")
 f=5
 x=1
+a = false 
+if (a) then {
+    print ("if")
+}
 for (x;x<f;x=x+1){
 	n = x + f
 }

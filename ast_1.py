@@ -30,6 +30,15 @@ class String():
     def eval(self):
         return str(self.value)
     
+class Boolean():
+    def __init__(self, value):
+        self.value = value
+    
+    def eval(self):
+        if (self.value):
+            return True
+        return False
+    
 #Adding strings
 class StringConcat:
     def __init__(self, s1, s2):
@@ -100,7 +109,11 @@ class Print():
         if (isinstance(self.value, str)):
             print(self.value.getstr()[1:-1])
         else: 
-            print(self.value.eval())
+            val = self.value.eval()
+            if val is None:
+                print("Variable not declared:", self.name)
+            else:
+                print(self.value.eval())
 
 class Assign():
     def __init__(self, name, value):
@@ -125,17 +138,8 @@ class Variable():
         if self.name in variables.keys():
             return variables[self.name]
         else: 
+            # return None
             raise RuntimeError("Variable not declared:", self.name)
-        
-class Variable2():
-    def __init__(self, name):
-        self.name = name
-    
-    def eval(self):
-        if self.name in variables.keys():
-            return variables[self.name][0]
-        else: 
-            raise RuntimeError('Variable: ', self.name,' not declared.')
         
 class If():
     def  __init__(self, condition, body, else_block = None):
@@ -177,3 +181,6 @@ class Program():
 
     def eval(self):
         print("Successful program")
+
+
+
